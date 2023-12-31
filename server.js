@@ -13,19 +13,29 @@ app.use(cors());
 // Enable CORS for all routes (you can adjust the options as needed)
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow requests from your frontend
-    credentials: true, // Include cookies in CORS requests if needed
+    origin: [
+      "http://localhost:3000",
+      "http://ec2-43-204-105-124.ap-south-1.compute.amazonaws.com",
+    ],
+    credentials: true,
   })
 );
 
+
 // MySQL Database Connection
 const db = mysql.createConnection({
-  host: "dc-schema.czm46ec6i16c.ap-south-1.rds.amazonaws.com",
+  host: "localhost",
   user: "root",
   password: "rootpassword", // Replace with your MySQL password
   database: "dc_schema",
-  port: 3306
 });
+// const db = mysql.createConnection({
+//   host: "dc-schema.czm46ec6i16c.ap-south-1.rds.amazonaws.com",
+//   user: "root",
+//   password: "rootpassword", // Replace with your MySQL password
+//   database: "dc_schema",
+//   port: 3306
+// });
 
 db.connect((err) => {
   if (err) {
