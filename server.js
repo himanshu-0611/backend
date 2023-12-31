@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "http://ec2-43-204-105-124.ap-south-1.compute.amazonaws.com",
+      "http://ec2-43-204-107-124.ap-south-1.compute.amazonaws.com",
     ],
     credentials: true,
   })
