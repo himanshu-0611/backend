@@ -23,19 +23,19 @@ app.use(cors());
 // );
 
 // MySQL Database Connection
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "rootpassword", // Replace with your MySQL password
-  database: "dc_schema",
-});
 // const db = mysql.createConnection({
-//   host: "dc-schema.czm46ec6i16c.ap-south-1.rds.amazonaws.com",
+//   host: "localhost",
 //   user: "root",
 //   password: "rootpassword", // Replace with your MySQL password
 //   database: "dc_schema",
-//   port: 3306
 // });
+const db = mysql.createConnection({
+  host: "dc-schema.czm46ec6i16c.ap-south-1.rds.amazonaws.com",
+  user: "root",
+  password: "rootpassword", // Replace with your MySQL password
+  database: "dc_schema",
+  port: 3306
+});
 
 db.connect((err) => {
   if (err) {
