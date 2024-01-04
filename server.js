@@ -8,7 +8,7 @@ const app = express();
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(cors());
 
 // Enable CORS for all routes (you can adjust the options as needed)
 // app.use(cors());
@@ -22,15 +22,19 @@ app.use(cors());
 //   })
 // );
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "http://ec2-43-204-107-124.ap-south-1.compute.amazonaws.com",
-    ],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:3000",
+//       "http://ec2-43-204-107-124.ap-south-1.compute.amazonaws.com",
+//     ],
+//     credentials: true,
+//   })
+// );
+app.use(cors({
+  origin: "*",
+  credentials: true,
+}));
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
