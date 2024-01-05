@@ -430,6 +430,13 @@ app.get("/api/userTasks", (req, res) => {
   });
 });
 
+app.get("/api/", (req, res) => {
+  res.send("status ok api");
+});
+app.get("/", (req, res) => {
+  res.send("status ok");
+});
+
 app.get("/api/leaderboard/:batch_no/:program_id", (req, res) => {
   const { batch_no, program_id } = req.params;
 
