@@ -66,175 +66,175 @@ db.connect((err) => {
 });
 
 // Signup Route
-app.post("/api/signup", async (req, res) => {
-  const {
-    user_name,
-    user_mailid,
-    user_password,
-    batch_no,
-    user_lang,
-    program,
-  } = req.body;
+// app.post("/api/signup", async (req, res) => {
+//   const {
+//     user_name,
+//     user_mailid,
+//     user_password,
+//     batch_no,
+//     user_lang,
+//     program,
+//   } = req.body;
 
-  console.log(req.body);
+//   console.log(req.body);
 
-  if (!user_name || !user_mailid || !user_password) {
-    return res.status(400).send("Invalid input data");
-  }
+//   if (!user_name || !user_mailid || !user_password) {
+//     return res.status(400).send("Invalid input data");
+//   }
 
-  // Check if the user_mailid already exists in the database
-  const checkEmailQuery =
-    "SELECT user_id, COUNT(*) AS count FROM user_details WHERE user_mailid = ?";
+//   // Check if the user_mailid already exists in the database
+//   const checkEmailQuery =
+//     "SELECT user_id, COUNT(*) AS count FROM user_details WHERE user_mailid = ?";
 
-  db.query(checkEmailQuery, [user_mailid], async (err, results) => {
-    if (err) {
-      console.error("Error checking email existence: " + err.message);
-      res.status(500).send("Error checking email existence");
-      return;
-    }
+//   db.query(checkEmailQuery, [user_mailid], async (err, results) => {
+//     if (err) {
+//       console.error("Error checking email existence: " + err.message);
+//       res.status(500).send("Error checking email existence");
+//       return;
+//     }
 
-    console.log("will check if em ex");
+//     console.log("will check if em ex");
 
-    const emailExists = results[0].count > 0;
+//     const emailExists = results[0].count > 0;
 
-    if (emailExists) {
-      const existingUserId = results[0].user_id;
+//     if (emailExists) {
+//       const existingUserId = results[0].user_id;
 
-      console.log(program + user_lang);
-      // Email already exists, return an error response
-      let programId = null;
-      if (program === "DSA" && user_lang === "C++") {
-        programId = 6;
-      } else if (program === "MERN") {
-        programId = 2;
-      } else if (program === "PlacementRun" && user_lang === "C++") {
-        programId = 3;
-      } else if (program === "PlacementRun" && user_lang === "Java") {
-        programId = 4;
-      } else if (program === "PlacementRun" && user_lang === "Python") {
-        programId = 5;
-      } else if (program === "DSA" && user_lang === "Java") {
-        programId = 7;
-      } else if (program === "DSA" && user_lang === "Python") {
-        programId = 8;
-      }
-      if (programId === null) {
-        return res.status(400).send("Invalid program");
-      }
+//       console.log(program + user_lang);
+//       // Email already exists, return an error response
+//       let programId = null;
+//       if (program === "DSA" && user_lang === "C++") {
+//         programId = 6;
+//       } else if (program === "MERN") {
+//         programId = 2;
+//       } else if (program === "PlacementRun" && user_lang === "C++") {
+//         programId = 3;
+//       } else if (program === "PlacementRun" && user_lang === "Java") {
+//         programId = 4;
+//       } else if (program === "PlacementRun" && user_lang === "Python") {
+//         programId = 5;
+//       } else if (program === "DSA" && user_lang === "Java") {
+//         programId = 7;
+//       } else if (program === "DSA" && user_lang === "Python") {
+//         programId = 8;
+//       }
+//       if (programId === null) {
+//         return res.status(400).send("Invalid program");
+//       }
 
-      console.log("now inserting vals in userprog");
+//       console.log("now inserting vals in userprog");
 
-      const insertProgressQuery =
-        "INSERT INTO user_progress (p_user_id, p_user_name, user_lang, task_id, streak, program_id, p_batch_no) VALUES (?, ?, ?, 0, 0, ?, ?)";
+//       const insertProgressQuery =
+//         "INSERT INTO user_progress (p_user_id, p_user_name, user_lang, task_id, streak, program_id, p_batch_no) VALUES (?, ?, ?, 0, 0, ?, ?)";
 
-      db.query(
-        insertProgressQuery,
-        [existingUserId, user_name, user_lang, programId, batch_no],
-        (progressErr) => {
-          if (progressErr) {
-            console.error(
-              "Error updating progress table: " + progressErr.message
-            );
-            res.status(500).send("Error updating progress table");
-            return;
-          }
+//       db.query(
+//         insertProgressQuery,
+//         [existingUserId, user_name, user_lang, programId, batch_no],
+//         (progressErr) => {
+//           if (progressErr) {
+//             console.error(
+//               "Error updating progress table: " + progressErr.message
+//             );
+//             res.status(500).send("Error updating progress table");
+//             return;
+//           }
 
-          res.status(200).send({ msg: "Signup successful" });
-        }
-      );
-    } else {
-      // Email does not exist, proceed with inserting the new record
-      try {
-        const hashedPassword = await bcrypt.hash(user_password, 10);
+//           res.status(200).send({ msg: "Signup successful" });
+//         }
+//       );
+//     } else {
+//       // Email does not exist, proceed with inserting the new record
+//       try {
+//         const hashedPassword = await bcrypt.hash(user_password, 10);
 
-        const insertUserQuery =
-          "INSERT INTO user_details (user_name, user_mailid, user_password, batch_no) VALUES (?, ?, ?, ?)";
+//         const insertUserQuery =
+//           "INSERT INTO user_details (user_name, user_mailid, user_password, batch_no) VALUES (?, ?, ?, ?)";
 
-        db.query(
-          insertUserQuery,
-          [user_name, user_mailid, hashedPassword, batch_no],
-          (err, userResult) => {
-            if (err) {
-              console.error("Signup error: " + err.message);
-              res.status(500).send("Error signing up");
-              return;
-            }
+//         db.query(
+//           insertUserQuery,
+//           [user_name, user_mailid, hashedPassword, batch_no],
+//           (err, userResult) => {
+//             if (err) {
+//               console.error("Signup error: " + err.message);
+//               res.status(500).send("Error signing up");
+//               return;
+//             }
 
-            let programId = null;
-            if (program === "DSA" && user_lang === "C++") {
-              programId = 6;
-            } else if (program === "MERN") {
-              programId = 2;
-            } else if (program === "PlacementRun" && user_lang === "C++") {
-              programId = 3;
-            } else if (program === "PlacementRun" && user_lang === "Java") {
-              programId = 4;
-            } else if (program === "PlacementRun" && user_lang === "Python") {
-              programId = 5;
-            } else if (program === "DSA" && user_lang === "Java") {
-              programId = 7;
-            } else if (program === "DSA" && user_lang === "Python") {
-              programId = 8;
-            }
+//             let programId = null;
+//             if (program === "DSA" && user_lang === "C++") {
+//               programId = 6;
+//             } else if (program === "MERN") {
+//               programId = 2;
+//             } else if (program === "PlacementRun" && user_lang === "C++") {
+//               programId = 3;
+//             } else if (program === "PlacementRun" && user_lang === "Java") {
+//               programId = 4;
+//             } else if (program === "PlacementRun" && user_lang === "Python") {
+//               programId = 5;
+//             } else if (program === "DSA" && user_lang === "Java") {
+//               programId = 7;
+//             } else if (program === "DSA" && user_lang === "Python") {
+//               programId = 8;
+//             }
 
-            console.log(program + " " + user_lang + " " + programId);
+//             console.log(program + " " + user_lang + " " + programId);
 
-            if (programId === null) return;
+//             if (programId === null) return;
 
-            const userId = userResult.insertId;
+//             const userId = userResult.insertId;
 
-            // Insert a corresponding record into the progress table
-            const insertProgressQuery =
-              "INSERT INTO user_progress (p_user_id, p_user_name, user_lang, task_id, streak, program_id, p_batch_no) VALUES (?, ?, ?, 0, 0, ?, ?)";
+//             // Insert a corresponding record into the progress table
+//             const insertProgressQuery =
+//               "INSERT INTO user_progress (p_user_id, p_user_name, user_lang, task_id, streak, program_id, p_batch_no) VALUES (?, ?, ?, 0, 0, ?, ?)";
 
-            db.query(
-              insertProgressQuery,
-              [userId, user_name, user_lang, programId, batch_no],
-              (progressErr) => {
-                if (progressErr) {
-                  console.error(
-                    "Error updating progress table: " + progressErr.message
-                  );
-                  // Handle the error and potentially roll back the user registration
-                  res.status(500).send("Error updating progress table");
-                  return;
-                }
+//             db.query(
+//               insertProgressQuery,
+//               [userId, user_name, user_lang, programId, batch_no],
+//               (progressErr) => {
+//                 if (progressErr) {
+//                   console.error(
+//                     "Error updating progress table: " + progressErr.message
+//                   );
+//                   // Handle the error and potentially roll back the user registration
+//                   res.status(500).send("Error updating progress table");
+//                   return;
+//                 }
 
-                let programId = null;
-                if (program === "DSA" && user_lang === "C++") {
-                  programId = 6;
-                } else if (program === "MERN") {
-                  programId = 2;
-                } else if (program === "PlacementRun" && user_lang === "C++") {
-                  programId = 3;
-                } else if (program === "PlacementRun" && user_lang === "Java") {
-                  programId = 4;
-                } else if (
-                  program === "PlacementRun" &&
-                  user_lang === "Python"
-                ) {
-                  programId = 5;
-                } else if (program === "DSA" && user_lang === "Java") {
-                  programId = 7;
-                } else if (program === "DSA" && user_lang === "Python") {
-                  programId = 8;
-                }
+//                 let programId = null;
+//                 if (program === "DSA" && user_lang === "C++") {
+//                   programId = 6;
+//                 } else if (program === "MERN") {
+//                   programId = 2;
+//                 } else if (program === "PlacementRun" && user_lang === "C++") {
+//                   programId = 3;
+//                 } else if (program === "PlacementRun" && user_lang === "Java") {
+//                   programId = 4;
+//                 } else if (
+//                   program === "PlacementRun" &&
+//                   user_lang === "Python"
+//                 ) {
+//                   programId = 5;
+//                 } else if (program === "DSA" && user_lang === "Java") {
+//                   programId = 7;
+//                 } else if (program === "DSA" && user_lang === "Python") {
+//                   programId = 8;
+//                 }
 
-                if (programId === null) return;
+//                 if (programId === null) return;
 
-                console.log("User registered with ID: " + userId);
-                res.status(200).send({ msg: "Signup successful" });
-              }
-            );
-          }
-        );
-      } catch (error) {
-        console.error("Password hashing error: " + error.message);
-        res.status(500).send("Error signing up");
-      }
-    }
-  });
-});
+//                 console.log("User registered with ID: " + userId);
+//                 res.status(200).send({ msg: "Signup successful" });
+//               }
+//             );
+//           }
+//         );
+//       } catch (error) {
+//         console.error("Password hashing error: " + error.message);
+//         res.status(500).send("Error signing up");
+//       }
+//     }
+//   });
+// });
 
 // Login Route
 app.post("/api/login", async (req, res) => {
